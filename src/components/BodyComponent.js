@@ -4,9 +4,13 @@ import LoginComponent from './LoginComponent';
 import ImageContainerComponent from './ImageContainerComponent';
 
 class BodyComponent extends Component{
-
+    componentDidMount() {
+        if(this.props.token){
+        this.props.fetchImages(this.props.token);
+        }
+    }
     render(){
-        return(<div>{this.props.token?<ImageContainerComponent/>:<LoginComponent/>}</div>)
+        return(<div>{this.props.token?<div><ImageContainerComponent/></div>:<LoginComponent/>}</div>)
     }
 }
 
