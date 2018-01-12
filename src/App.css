@@ -1,3 +1,6 @@
+.App{
+  height: 100vh;
+}
 .HeaderComponent{
   display: flex;
   flex-direction: row;
@@ -35,4 +38,17 @@
     flex-direction: row;
     justify-content: center;
     align-items: center
+}
+.instaImage{
+  height:200px;
+  width:200px;
+  margin:10px;
+}
+.imageContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 70vh;
 }

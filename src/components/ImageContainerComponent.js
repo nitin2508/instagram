@@ -24,7 +24,7 @@ class ImageContainerComponent extends Component{
     }
 
     render(){
-        return(<div>{this.generateImageArray()}</div>)
+        return(<div className="imageContainer">{this.generateImageArray()}</div>)
     }
 
 }
