@@ -1,8 +1,9 @@
 import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchImages} from '../actions/index';
+import {fetchImages,predictImage} from '../actions/index';
 import ImageComponent from './ImageComponent'
+
 
 class ImageContainerComponent extends Component{
 
@@ -15,6 +16,7 @@ class ImageContainerComponent extends Component{
 
     generateImageArray(){
         if(this.props&& this.props.images && this.props.images.length>0){
+            // this.props.predictImage()
             return this.props.images.map((image)=>{
                 return <ImageComponent key={image.images.low_resolution.url} url={image.images.low_resolution.url}/>
             })
@@ -37,7 +39,7 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
     return bindActionCreators({
-        fetchImages
+        fetchImages,predictImage
     }, dispatch);
 }
 

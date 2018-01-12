@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import { Button, Icon } from 'semantic-ui-react'
 import {onLogin} from '../actions/index';
 
 const instagramLoginUrl = 'https://api.instagram.com/oauth/authorize/?client_id=2bfd0a9c1736474bb0312e45d3735673&redirect_uri=http://localhost:3000&response_type=token';
@@ -16,8 +17,14 @@ class LoginComponent extends Component{
     }
    
     render(){
-        console.log(this.props)
-       return( <a href={instagramLoginUrl}>Login With Instagram</a>)
+        // console.log(this.props)
+        // <a href={instagramLoginUrl}>Login With Instagram</a>
+       return(  <div className="instagramButton">
+                    <Button href={instagramLoginUrl} color='instagram'>
+                         <Icon name='instagram' />Login With Instagram
+                    </Button>
+                </div> )
+       
     }
 
 }
