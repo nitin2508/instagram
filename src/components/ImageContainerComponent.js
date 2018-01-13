@@ -55,10 +55,9 @@ class ImageContainerComponent extends Component{
           return(<div className="categoryDropDown">
                     <Dropdown onChange={this.onChangeingDroapDownValues} placeholder='Select Category' selection options={options} />
                   </div>) 
-        }else if(this.props.images && this.props.images.length==0){
+        }else if(this.props.images && this.props.images.length===0){
           return (<h4 style={{textAlign:'center'}}>No Image Found</h4>)
-        }
-        
+        }      
         else{
           return(<Loader active inline='centered' />)
         }
@@ -91,7 +90,6 @@ class ImageContainerComponent extends Component{
     }
 
      generateImageArray(){
-       //this.setState({images:this.props.images})
         if(this.state&& this.state.images && this.state.images.length>0){          
             return this.state.images.map((image)=>{
               if(image.images){
