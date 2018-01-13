@@ -39,7 +39,7 @@ class ImageContainerComponent extends Component{
     }
     
     componentDidUpdate(){
-       if(this.props.images &&!this.props.categorizedImageObj){
+       if(this.props.images &&this.props.images.length>0 &&!this.props.categorizedImageObj){
            this.props.fetchCategorizedImage(this.props.images)
        }
     }
@@ -65,7 +65,11 @@ class ImageContainerComponent extends Component{
           return(<div className="categoryDropDown">
                     <Dropdown onChange={this.onChangeingDroapDownValues} placeholder='Select Category' selection options={options} />
                   </div>) 
-        }else{
+        }else if(this.props.images && this.props.images.length==0){
+          return (<h4 style={{textAlign:'center'}}>No Image Found</h4>)
+        }
+        
+        else{
           return(<Loader active inline='centered' />)
         }
     }
