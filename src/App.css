@@ -50,5 +50,19 @@
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
-  min-height: 70vh;
+}
+.bodyContainer{
+  display: flex;
+  flex-direction: column;
+  padding: 5%;
+
+}
+.categoryDropDown{
+      display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.ui.selection.dropdown{
+  width: 300px !important
 }

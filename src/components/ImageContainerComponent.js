@@ -1,35 +1,80 @@
 import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchImages,categorizedImage} from '../actions/index';
+import {fetchImages,fetchCategorizedImage} from '../actions/index';
 import ImageComponent from './ImageComponent'
+import { Dropdown ,Loader} from 'semantic-ui-react'
 
 
 class ImageContainerComponent extends Component{
+
+    constructor(props){
+      super(props);
+      this.categorizedObj = null;
+      this.state = {
+        images:null
+      }
+    }
 
     componentDidMount() {
         if(this.props.token){
         this.props.fetchImages(this.props.token);
         }
     }
-    shouldComponentUpdate(){
-        console.log('SHOLUE COMPONENT UPDATE')
-        if(this.props.categorizedImageObj){
-            return false;
+
+
+    // shouldComponentUpdate(){
+    //     console.log('SHOLUE COMPONENT UPDATE')
+    //     if(this.props.categorizedImageObj){
+    //         return false;
+    //     }
+    //     return true;
+    // }
+
+    componentWillReceiveProps(nextProps){
+     // debugger;
+        if(nextProps.images &&nextProps.images.length>0 &&!this.props.categorizedImageObj){
+          this.setState({images:nextProps.images})
         }
-        return true;
     }
     
     componentDidUpdate(){
-       if(this.props.images){
-           this.props.categorizedImage(this.props.images)
+       if(this.props.images &&!this.props.categorizedImageObj){
+           this.props.fetchCategorizedImage(this.props.images)
        }
+    }
+
+    onChangeingDroapDownValues = (event,data)=>{
+        if(data && data.value){
+          if(data.value ==='allImages'){
+            this.setState({images:this.props.images})
+          }else{
+            let images = this.categorizedObj[data.value];
+            let cloneImage = images.slice();  
+            this.setState({images:cloneImage})
+          }
+        }
     }
     
     generateCategorizedImages(){
-           if(this.props.categorizedImageObj){
-              
+        if(this.props.images&&this.props.categorizedImageObj){
+          this.categorizedObj = this.giveCategorizedObject(this.props.categorizedImageObj.outputs);
+          let options = this.giveDropDownValues(this.categorizedObj)
+          options.unshift({key:'allImages',value:'allImages',text:'All Images'})
+        
+          return(<div className="categoryDropDown">
+                    <Dropdown onChange={this.onChangeingDroapDownValues} placeholder='Select Category' selection options={options} />
+                  </div>) 
+        }else{
+          return(<Loader active inline='centered' />)
         }
+    }
+
+    giveDropDownValues(categoryObj){
+        let array = Object.keys(categoryObj);
+        return array.map((category)=>{
+          return{key:category,value:category,text:category}
+        })
     }
 
     giveCategorizedObject(object){
@@ -50,17 +95,35 @@ class ImageContainerComponent extends Component{
 
             return categorizedObj;
     }
-  
-    generateImageArray(){
-        if(this.props&& this.props.images && this.props.images.length>0){          
-            return this.props.images.map((image)=>{
+
+     generateImageArray(){
+       //this.setState({images:this.props.images})
+        if(this.state&& this.state.images && this.state.images.length>0){          
+            return this.state.images.map((image)=>{
+              if(image.images){
                 return <ImageComponent key={image.images.low_resolution.url} url={image.images.low_resolution.url}/>
+              }else{
+                 return <ImageComponent key={image} url={image}/>
+              }
             })
         }
     }
+  
+    // generateImageArray(){
+    //     if(this.props&& this.props.images && this.props.images.length>0){          
+    //         return this.props.images.map((image)=>{
+    //             return <ImageComponent key={image.images.low_resolution.url} url={image.images.low_resolution.url}/>
+    //         })
+    //     }
+    // }
 
     render(){
-        return(<div className="imageContainer">{this.generateImageArray()}{this.generateCategorizedImages()}</div>)
+        return(<div className="bodyContainer">
+                  {this.generateCategorizedImages()}
+                    <div className="imageContainer">
+                      {this.generateImageArray()}
+                    </div>
+                </div>)
     }
 
 }
@@ -76,160 +139,8 @@ function mapStateToProps(state){
 
 function mapDispatchToProps(dispatch){
     return bindActionCreators({
-        fetchImages,categorizedImage
+        fetchImages,fetchCategorizedImage
     }, dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(ImageContainerComponent);
-
-var obj = {
-  "outdoors": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg",
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg",
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "nature": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg",
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "sunset": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "silhouette": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "horizontal plane": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "reflection": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "horizontal": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "dawn": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "dusk": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "sky": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "grass": [
-    "https://scontent.cdninstagram.com/vp/6423c75c20fa82c3ae449935692b5e91/5AD8DD62/t51.2885-15/s640x640/sh0.08/e35/26262917_1942462446013678_2230267884204982272_n.jpg"
-  ],
-  "celebration": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg",
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "no person": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg",
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "candle": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "Christmas": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg",
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "religion": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "flame": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "dark": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "winter": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg",
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "illuminated": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "light": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "festival": [
-    "https://scontent.cdninstagram.com/vp/71707ec5313066a59716ff31097a84df/5AD86B50/t51.2885-15/s640x640/sh0.08/e35/26065268_153709091951169_7738462058621960192_n.jpg"
-  ],
-  "rose": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "love": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "romance": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "flower": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg",
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "petal": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "bouquet": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "romantic": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "bride": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "wedding": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "gift": [
-    "https://scontent.cdninstagram.com/vp/2b747fb4b8859b495e348fffbdaa9dc3/5AFBE26A/t51.2885-15/e35/26072933_158358188139539_4834852171235196928_n.jpg"
-  ],
-  "leaf": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "flora": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "growth": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "garden": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "food": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "summer": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "agriculture": [
-    "https://scontent.cdninstagram.com/vp/e0ead15c05e513ea269e2b431c1cb23d/5ADDB187/t51.2885-15/s640x640/sh0.08/e35/26070157_144091902969117_8936867790879457280_n.jpg"
-  ],
-  "snow": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "tree": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "season": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "wood": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "frozen": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "mountain": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "landscape": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ],
-  "weather": [
-    "https://scontent.cdninstagram.com/vp/89339e9767d8d1a0509871e8621f36ae/5AFB67E7/t51.2885-15/s640x640/sh0.08/e35/26181204_174171099851324_3608246388086800384_n.jpg"
-  ]
-}

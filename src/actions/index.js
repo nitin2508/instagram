@@ -25,7 +25,7 @@ export function fetchImages(token){
     };
 }
 
-export function categorizedImage(images){
+export function fetchCategorizedImage(images){
     const array = _giveObjectOfImages(images);
     console.log(array)
     const request = app.models.predict(Clarifai.GENERAL_MODEL,array);
