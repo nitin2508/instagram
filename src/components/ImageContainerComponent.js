@@ -22,17 +22,7 @@ class ImageContainerComponent extends Component{
         }
     }
 
-
-    // shouldComponentUpdate(){
-    //     console.log('SHOLUE COMPONENT UPDATE')
-    //     if(this.props.categorizedImageObj){
-    //         return false;
-    //     }
-    //     return true;
-    // }
-
     componentWillReceiveProps(nextProps){
-     // debugger;
         if(nextProps.images &&nextProps.images.length>0 &&!this.props.categorizedImageObj){
           this.setState({images:nextProps.images})
         }
@@ -83,20 +73,20 @@ class ImageContainerComponent extends Component{
 
     giveCategorizedObject(object){
          const categorizedObj = {};
-                 //const object = this.props.categorizedImageObj.outputs;
+
         for(let i=0;i<object.length;i++){
                 let imageUrl =object[i].input.data.image.url;
                 let categoryArray = object[i].data.concepts;
+
                 for(let j=0;j<=10;j++){
                     if(categorizedObj[categoryArray[j].name]){
-                    categorizedObj[categoryArray[j].name].push(imageUrl)
-                }   else{
-                            categorizedObj[categoryArray[j].name]=[];    
-                            categorizedObj[categoryArray[j].name].push(imageUrl)
+                      categorizedObj[categoryArray[j].name].push(imageUrl)
+                     }else{
+                      categorizedObj[categoryArray[j].name]=[];    
+                      categorizedObj[categoryArray[j].name].push(imageUrl)
                     }
-            }
-        }
-
+             }
+          }
             return categorizedObj;
     }
 
@@ -112,14 +102,6 @@ class ImageContainerComponent extends Component{
             })
         }
     }
-  
-    // generateImageArray(){
-    //     if(this.props&& this.props.images && this.props.images.length>0){          
-    //         return this.props.images.map((image)=>{
-    //             return <ImageComponent key={image.images.low_resolution.url} url={image.images.low_resolution.url}/>
-    //         })
-    //     }
-    // }
 
     render(){
         return(<div className="bodyContainer">
@@ -128,7 +110,7 @@ class ImageContainerComponent extends Component{
                       {this.generateImageArray()}
                     </div>
                 </div>)
-    }
+       }
 
 }
 

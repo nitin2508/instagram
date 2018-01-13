@@ -37,7 +37,6 @@ export function fetchCategorizedImage(images){
 
 function _giveObjectOfImages(images){
     return images.map((image)=>{
-   // console.log(image.images.standard_resolution.url)
        return {url:image.images.standard_resolution.url}
     })
 } 

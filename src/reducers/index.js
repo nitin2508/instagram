@@ -23,8 +23,6 @@ function tokenReducer(state=initalState,action){
 }
 
 function fetchImages(state=initalState,action){
-    console.log(state)
-    console.log(action)
       switch(action.type){
         case FETCHING_IMAGES:
             return Object.assign({},state,{images:action.payload.data.data})
@@ -39,25 +37,6 @@ function categorizedImage(state=initalState,action){
         default:return state;
     }
 }
-
-// function giveObjectOfCategorizedImage(object){
-//     
-//    // debugger;
-    // for(let i=0;i<object.length;i++){
-    //     let imageUrl =object[i].input.data.image.url;
-    //     let categoryArray = object[i].data.concepts;
-    //     for(let j=0;j<=10;j++){
-    //         if(categorizedObj[categoryArray[j].name]){
-    //             categorizedObj[categoryArray[j].name].push(imageUrl)
-    //         }else{
-    //             categorizedObj[categoryArray[j].name][0]=imageUrl
-    //         }
-    //     }
-    // }
-
-//     //console.log(categorizedObj);
-//     return categorizedObj
-// }
 
 export default rootReducer;
 

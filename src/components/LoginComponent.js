@@ -17,8 +17,6 @@ class LoginComponent extends Component{
     }
    
     render(){
-        // console.log(this.props)
-        // <a href={instagramLoginUrl}>Login With Instagram</a>
        return(  <div className="instagramButton">
                     <Button href={instagramLoginUrl} color='instagram'>
                          <Icon name='instagram' />Login With Instagram
